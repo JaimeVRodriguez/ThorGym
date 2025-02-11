@@ -13,6 +13,13 @@ export default function _layout() {
             }}
         />
 
+        <Stack.Screen
+            name="operatorHome"
+            options={{
+                header: ()=> <HomeHeader />
+            }}
+        />
+
     </Stack>
   )
 }

@@ -1,0 +1,9 @@
+Follow these steps to successfully run this project:
+- go to https://console.firebase.google.com to create a new project
+- enable email and password auth provider in authentication
+- create Firestore Database (test mode)
+- create a web app app to the project and copy the config into firebaseConfig.js file in the root directory
+- run "npm install"
+- run "npm run start"
+
+If you stuck somewhere contact me on buymeacoffee.com.

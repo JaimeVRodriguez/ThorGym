@@ -12,20 +12,31 @@ export default function SignUp() {
     const router = useRouter();
     const {register} = useAuth();
     const [loading, setLoading] = useState(false);
+    const [role, setRole] = useState('user');
 
-    const emailRef = useRef("");
-    const passwordRef = useRef("");
-    const usernameRef = useRef("");
-    const profileRef = useRef("");
+    const emailRef = useRef('');
+    const passwordRef = useRef('');
+    const usernameRef = useRef('');
+
+
 
     const handleRegister = async ()=>{
-        if(!emailRef.current || !passwordRef.current || !usernameRef.current || !profileRef.current){
+        if(!emailRef.current || !passwordRef.current || !usernameRef.current){
             Alert.alert('Sign Up', "Please fill all the fields!");
             return;
         }
         setLoading(true);
 
-        let response = await register(emailRef.current, passwordRef.current, usernameRef.current, profileRef.current);
+        const uniqueKey = usernameRef.current.trim() || Math.random().toString(36).substring(7);
+        const fallbackAvatarUrl = `https://api.dicebear.com/6.x/bottts/svg?seed=${encodeURIComponent(uniqueKey)}`;
+
+        let response = await register(
+            emailRef.current,
+            passwordRef.current,
+            usernameRef.current,
+            fallbackAvatarUrl,
+            role
+        );
         setLoading(false);
 
         console.log('got result: ', response);
@@ -80,15 +91,66 @@ export default function SignUp() {
                     />
                 </View>
 
-                <View style={{height: hp(7)}} className="flex-row gap-4 px-4 bg-neutral-100 items-center rounded-xl">
-                    <Feather name="image" size={hp(2.7)} color="gray" />
-                    <TextInput
-                        onChangeText={value=> profileRef.current=value}
-                        style={{fontSize: hp(2)}}
-                        className="flex-1 font-semibold text-neutral-700"
-                        placeholder='Profile url'
-                        placeholderTextColor={'gray'}
-                    />
+                <View style={{ flexDirection: 'row', gap: wp(10), marginVertical: hp(2) }}>
+                    <TouchableOpacity
+                        onPress={() => setRole('user')}
+                        style={{ flexDirection: 'row', alignItems: 'center' }}
+                    >
+                        <View
+                            style={{
+                                height: 20,
+                                width: 20,
+                                borderRadius: 10,
+                                borderWidth: 2,
+                                borderColor: role === 'user' ? '#4F46E5' : '#ccc',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                marginRight: 8,
+                            }}
+                        >
+                            {role === 'user' && (
+                                <View
+                                    style={{
+                                        height: 10,
+                                        width: 10,
+                                        borderRadius: 5,
+                                        backgroundColor: '#4F46E5',
+                                    }}
+                                />
+                            )}
+                        </View>
+                        <Text>Operator</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                        onPress={() => setRole('trainer')}
+                        style={{ flexDirection: 'row', alignItems: 'center' }}
+                    >
+                        <View
+                            style={{
+                                height: 20,
+                                width: 20,
+                                borderRadius: 10,
+                                borderWidth: 2,
+                                borderColor: role === 'trainer' ? '#4F46E5' : '#ccc',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                marginRight: 8,
+                            }}
+                        >
+                            {role === 'trainer' && (
+                                <View
+                                    style={{
+                                        height: 10,
+                                        width: 10,
+                                        borderRadius: 5,
+                                        backgroundColor: '#4F46E5',
+                                    }}
+                                />
+                            )}
+                        </View>
+                        <Text>Trainer</Text>
+                    </TouchableOpacity>
                 </View>
                     
 
