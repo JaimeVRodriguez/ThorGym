@@ -32,8 +32,13 @@ function MainLayout() {
 
         console.log("Got role =>", user.role);
         if (user.role === "user") {
-            console.log("Redirecting to operatorHome...");
-            router.replace("/(app)/operatorHome");
+            if (user.hasSeenOnboarding === false) {
+                console.log("User has NOT seen onboarding => route to Onboarding");
+                router.replace("/(app)/onboarding");
+            } else {
+                console.log("Redirecting to operatorHome...");
+                router.replace("/(app)/operatorHome");
+            }
         } else if (user.role === "trainer") {
             console.log("Redirecting to trainer home...");
             router.replace("/(app)/home");

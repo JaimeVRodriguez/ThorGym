@@ -62,7 +62,8 @@ export const AuthContextProvider = ({ children }) => {
                 userId: response.user.uid,
                 username,
                 profileUrl,
-                role // e.g. 'operator' or 'trainer'
+                role,
+                hasSeenOnboarding: role === "user" ? false : true
             });
 
             return { success: true, data: response.user };
