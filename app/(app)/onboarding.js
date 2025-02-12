@@ -1,11 +1,12 @@
 import React, {useState, useEffect} from "react";
-import {View, Text, TouchableOpacity, FlatList} from "react-native";
+import {View, Text, TouchableOpacity, FlatList, SafeAreaView} from "react-native";
 import {db} from "../../firebaseConfig";
 import {collection, query, where, getDocs, arrayUnion} from "firebase/firestore";
 import Animated, {SlideInRight} from "react-native-reanimated";
 import {useRouter} from "expo-router";
 import {doc, updateDoc} from "firebase/firestore";
 import {useAuth} from "../../context/authContext";
+import { LinearGradient } from "expo-linear-gradient";
 
 export default function OnboardingScreen() {
     const router = useRouter();
@@ -57,46 +58,76 @@ export default function OnboardingScreen() {
     };
 
     return (
-        <Animated.View
-            entering={SlideInRight.duration(500)}
-            className="flex-1 items-center justify-center bg-white px-4"
-        >
-            <Text className="text-2xl font-bold mb-4">Select Your Coach</Text>
+        <SafeAreaView className="flex-1 bg-white">
+            {/* Animate the entire screen on entry */}
+            <Animated.View entering={SlideInRight.duration(500)} className="flex-1">
 
-            {/* 4) Display the list of trainers */}
-            <FlatList
-                data={coaches}
-                keyExtractor={(item) => item.id}
-                renderItem={({item}) => {
-                    const isSelected = item.id === selectedCoach;
-                    return (
+                {/* Gradient header at the top */}
+                <View className="h-1/3 w-full">
+                    <LinearGradient
+                        colors={["#F8B500", "#F76B1C"]} // Adjust or brand these colors as you like
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 1, y: 1 }}
+                        className="flex-1 justify-end px-4 pb-6 rounded-b-3xl"
+                    >
+                        {/* Header text over the gradient */}
+                        <Text className="text-3xl font-bold text-white mb-2">Welcome!</Text>
+                        <Text className="text-base text-white mb-8">
+                            Let’s find the right coach to get you started
+                        </Text>
+                    </LinearGradient>
+                </View>
+
+                {/* Main content area for coach selection */}
+                <View className="flex-1 px-4 pt-6">
+                    <Text className="text-xl font-bold text-gray-900 mb-2">
+                        Select Your Coach
+                    </Text>
+                    <Text className="text-base text-gray-500 mb-4">
+                        Pick from the list below. You can always change later.
+                    </Text>
+
+                    <FlatList
+                        data={coaches}
+                        keyExtractor={(item) => item.id}
+                        contentContainerStyle={{ paddingBottom: 80 }}
+                        renderItem={({ item }) => {
+                            const isSelected = item.id === selectedCoach;
+                            return (
+                                <TouchableOpacity
+                                    onPress={() => handleCoachSelect(item.id)}
+                                    className={`
+                    mb-3 p-4 rounded-full
+                    border border-gray-300
+                    ${isSelected ? "bg-blue-600 border-blue-600" : "bg-white"}
+                  `}
+                                >
+                                    <Text
+                                        className={`
+                      text-base font-semibold
+                      ${isSelected ? "text-white" : "text-gray-800"}
+                    `}
+                                    >
+                                        {item.username ?? "Unnamed Coach"}
+                                    </Text>
+                                </TouchableOpacity>
+                            );
+                        }}
+                    />
+                </View>
+
+                {/* Continue button pinned at the bottom (above the safe area) */}
+                {selectedCoach && (
+                    <View className="absolute bottom-0 w-full px-4 py-4 bg-white">
                         <TouchableOpacity
-                            onPress={() => handleCoachSelect(item.id)}
-                            className={`mb-3 p-4 rounded-lg ${
-                                isSelected ? "bg-blue-500" : "bg-gray-200"
-                            }`}
+                            onPress={handleContinue}
+                            className="bg-blue-600 rounded-full py-4 items-center"
                         >
-                            <Text
-                                className={`text-lg font-semibold ${
-                                    isSelected ? "text-white" : "text-black"
-                                }`}
-                            >
-                                {item.username ?? "Unnamed Coach"}
-                            </Text>
+                            <Text className="text-white text-lg font-bold">Continue</Text>
                         </TouchableOpacity>
-                    );
-                }}
-            />
-
-            {/* 5) Only show continue if user selected a coach */}
-            {selectedCoach && (
-                <TouchableOpacity
-                    onPress={handleContinue}
-                    className="mt-4 bg-blue-600 px-6 py-3 rounded-lg"
-                >
-                    <Text className="text-white text-lg font-bold">Continue</Text>
-                </TouchableOpacity>
-            )}
-        </Animated.View>
+                    </View>
+                )}
+            </Animated.View>
+        </SafeAreaView>
     );
 }
