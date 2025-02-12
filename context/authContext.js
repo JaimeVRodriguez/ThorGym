@@ -63,7 +63,7 @@ export const AuthContextProvider = ({ children }) => {
                 username,
                 profileUrl,
                 role,
-                hasSeenOnboarding: false
+                hasSeenOnboarding: role === "user" ? false : true
             });
 
             return { success: true, data: response.user };

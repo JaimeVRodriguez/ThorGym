@@ -40,19 +40,7 @@ export default function UserHome() {
 
     return (
         <View className="flex-1 bg-white">
-            <StatusBar style="light" />
-
-            {
-                coaches.length>0? (
-                    <ChatList currentUser={user} users={coaches} />
-                ):(
-                    <View className="flex items-center" style={{top: hp(30)}}>
-                        <ActivityIndicator size="large" />
-                        {/* <Loading size={hp(10)} /> */}
-                    </View>
-                )
-            }
-
+            <Text>Operator Home</Text>
         </View>
     );
 }
