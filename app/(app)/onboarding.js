@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from "react";
 import {View, Text, TouchableOpacity, FlatList} from "react-native";
 import {db} from "../../firebaseConfig";
-import {collection, query, where, getDocs} from "firebase/firestore";
+import {collection, query, where, getDocs, arrayUnion} from "firebase/firestore";
 import Animated, {SlideInRight} from "react-native-reanimated";
 import {useRouter} from "expo-router";
 import {doc, updateDoc} from "firebase/firestore";
