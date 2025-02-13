@@ -7,6 +7,8 @@ import {useRouter} from "expo-router";
 import {doc, updateDoc} from "firebase/firestore";
 import {useAuth} from "../../context/authContext";
 import { LinearGradient } from "expo-linear-gradient";
+import {StatusBar} from "expo-status-bar";
+import {useSafeAreaInsets} from "react-native-safe-area-context";
 
 export default function OnboardingScreen() {
     const router = useRouter();
@@ -57,32 +59,34 @@ export default function OnboardingScreen() {
         router.replace("/(app)/operatorHome");
     };
 
+    const insets = useSafeAreaInsets();
+
     return (
-        <SafeAreaView className="flex-1 bg-white">
+        <View className="flex-1 bg-white">
+            {/* Make the status bar translucent so the gradient appears behind the notch */}
+            <StatusBar translucent backgroundColor="transparent" barStyle="light-content" />
+
             {/* Animate the entire screen on entry */}
             <Animated.View entering={SlideInRight.duration(500)} className="flex-1">
-
-                {/* Gradient header at the top */}
-                <View className="h-1/3 w-full">
-                    <LinearGradient
-                        colors={["#F8B500", "#F76B1C"]} // Adjust or brand these colors as you like
-                        start={{ x: 0, y: 0 }}
-                        end={{ x: 1, y: 1 }}
-                        className="flex-1 justify-end px-4 pb-6 rounded-b-3xl"
-                    >
-                        {/* Header text over the gradient */}
-                        <Text className="text-3xl font-bold text-white mb-2">Welcome!</Text>
-                        <Text className="text-base text-white mb-8">
-                            Let’s find the right coach to get you started
-                        </Text>
-                    </LinearGradient>
-                </View>
-
-                {/* Main content area for coach selection */}
-                <View className="flex-1 px-4 pt-6">
-                    <Text className="text-xl font-bold text-gray-900 mb-2">
-                        Select Your Coach
+                {/* TOP: Full-bleed gradient */}
+                <LinearGradient
+                    colors={["#F8B500", "#F76B1C"]}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    className="h-1/3 w-full px-4 pb-6 rounded-b-3xl justify-end"
+                    style={{paddingTop: insets.top + 60, paddingLeft: insets.left + 10}}
+                    // Optionally add top padding to avoid text under notch, e.g. "pt-12"
+                    // className="h-1/3 w-full px-4 pb-6 pt-12 rounded-b-3xl justify-end"
+                >
+                    <Text className="text-3xl font-bold text-white mb-2">Welcome!</Text>
+                    <Text className="text-base text-white mb-8">
+                        Let’s find the right coach to get you started
                     </Text>
+                </LinearGradient>
+
+                {/* MIDDLE: Coach selection */}
+                <View className="flex-1 px-4 pt-6">
+                    <Text className="text-xl font-bold text-gray-900 mb-2">Select Your Coach</Text>
                     <Text className="text-base text-gray-500 mb-4">
                         Pick from the list below. You can always change later.
                     </Text>
@@ -116,7 +120,7 @@ export default function OnboardingScreen() {
                     />
                 </View>
 
-                {/* Continue button pinned at the bottom (above the safe area) */}
+                {/* BOTTOM: Continue button pinned above system nav */}
                 {selectedCoach && (
                     <View className="absolute bottom-0 w-full px-4 py-4 bg-white">
                         <TouchableOpacity
@@ -128,6 +132,6 @@ export default function OnboardingScreen() {
                     </View>
                 )}
             </Animated.View>
-        </SafeAreaView>
+        </View>
     );
 }
