@@ -44,8 +44,8 @@ export default function SignIn() {
         <CustomKeyboardView>
             <StatusBar style='dark' />
             <View
-                style={{ paddingTop: hp(8), paddingHorizontal: wp(5) }}
-                className='flex-1 gap-12'
+                style={{ paddingTop: hp(4), paddingHorizontal: wp(5) }}
+                className='flex-1 gap-4'
             >
                 {/* SignIn image */}
                 <View className='items-center'>

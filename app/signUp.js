@@ -6,6 +6,7 @@ import {
     TouchableOpacity,
     Pressable,
     Alert,
+    Switch,
 } from 'react-native';
 import React, { useRef, useState } from 'react';
 import {
@@ -56,19 +57,20 @@ export default function SignUp() {
             Alert.alert('Sign Up', response.msg);
         }
     };
+
     return (
         <CustomKeyboardView>
             <StatusBar style='dark' />
             <View
-                style={{ paddingTop: hp(7), paddingHorizontal: wp(5) }}
-                className='flex-1 gap-12'
+                style={{ paddingTop: hp(4), paddingHorizontal: wp(5) }}
+                className='flex-1 gap-4'
             >
                 {/* signIn image */}
                 <View className='items-center'>
                     <Image
-                        style={{ height: hp(20) }}
+                        style={{ height: hp(35) }}
                         resizeMode='contain'
-                        source={require('../assets/images/register.png')}
+                        source={require('../assets/images/thor3.png')}
                     />
                 </View>
 
@@ -83,7 +85,7 @@ export default function SignUp() {
                     <View className='gap-4'>
                         <View
                             style={{ height: hp(7) }}
-                            className='flex-row gap-4 px-4 bg-neutral-100 items-center rounded-xl'
+                            className='flex-row gap-4 px-4 bg-neutral-100 items-center rounded-full'
                         >
                             <Feather name='user' size={hp(2.7)} color='gray' />
                             <TextInput
@@ -99,7 +101,7 @@ export default function SignUp() {
 
                         <View
                             style={{ height: hp(7) }}
-                            className='flex-row gap-4 px-4 bg-neutral-100 items-center rounded-xl'
+                            className='flex-row gap-4 px-4 bg-neutral-100 items-center rounded-full'
                         >
                             <Octicons name='mail' size={hp(2.7)} color='gray' />
                             <TextInput
@@ -114,7 +116,7 @@ export default function SignUp() {
                         </View>
                         <View
                             style={{ height: hp(7) }}
-                            className='flex-row gap-4 px-4 bg-neutral-100 items-center rounded-xl'
+                            className='flex-row gap-4 px-4 bg-neutral-100 items-center rounded-full'
                         >
                             <Octicons name='lock' size={hp(2.7)} color='gray' />
                             <TextInput
@@ -129,84 +131,17 @@ export default function SignUp() {
                             />
                         </View>
 
-                        <View
-                            style={{
-                                flexDirection: 'row',
-                                gap: wp(10),
-                                marginVertical: hp(2),
-                            }}
-                        >
-                            <TouchableOpacity
-                                onPress={() => setRole('user')}
-                                style={{
-                                    flexDirection: 'row',
-                                    alignItems: 'center',
-                                }}
-                            >
-                                <View
-                                    style={{
-                                        height: 20,
-                                        width: 20,
-                                        borderRadius: 10,
-                                        borderWidth: 2,
-                                        borderColor:
-                                            role === 'user'
-                                                ? '#4F46E5'
-                                                : '#ccc',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        marginRight: 8,
-                                    }}
-                                >
-                                    {role === 'user' && (
-                                        <View
-                                            style={{
-                                                height: 10,
-                                                width: 10,
-                                                borderRadius: 5,
-                                                backgroundColor: '#4F46E5',
-                                            }}
-                                        />
-                                    )}
-                                </View>
-                                <Text>Operator</Text>
-                            </TouchableOpacity>
-
-                            <TouchableOpacity
-                                onPress={() => setRole('trainer')}
-                                style={{
-                                    flexDirection: 'row',
-                                    alignItems: 'center',
-                                }}
-                            >
-                                <View
-                                    style={{
-                                        height: 20,
-                                        width: 20,
-                                        borderRadius: 10,
-                                        borderWidth: 2,
-                                        borderColor:
-                                            role === 'trainer'
-                                                ? '#4F46E5'
-                                                : '#ccc',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        marginRight: 8,
-                                    }}
-                                >
-                                    {role === 'trainer' && (
-                                        <View
-                                            style={{
-                                                height: 10,
-                                                width: 10,
-                                                borderRadius: 5,
-                                                backgroundColor: '#4F46E5',
-                                            }}
-                                        />
-                                    )}
-                                </View>
-                                <Text>Trainer</Text>
-                            </TouchableOpacity>
+                        {/* Role selection  */}
+                        <View className='flex-row justify-between items-center mt-4'>
+                            <Text style={{ fontSize: hp(2.2) }} className='font-semibold'>
+                                Sign up as Trainer
+                            </Text>
+                            <Switch
+                                value={role === 'trainer'}
+                                onValueChange={(value) => setRole(value ? 'trainer' : 'user')}
+                                trackColor={{ false: '#ccc', true: '#4F46E5' }}
+                                thumbColor={role === 'trainer' ? '#fff' : '#f4f3f4'}
+                            />
                         </View>
 
                         {/* submit button */}
@@ -220,7 +155,7 @@ export default function SignUp() {
                                 <TouchableOpacity
                                     onPress={handleRegister}
                                     style={{ height: hp(6.5) }}
-                                    className='bg-indigo-500 rounded-xl justify-center items-center'
+                                    className='bg-psyop-green rounded-full justify-center items-center'
                                 >
                                     <Text
                                         style={{ fontSize: hp(2.7) }}
@@ -244,7 +179,7 @@ export default function SignUp() {
                             <Pressable onPress={() => router.push('signIn')}>
                                 <Text
                                     style={{ fontSize: hp(1.8) }}
-                                    className='font-bold text-indigo-500'
+                                    className='font-bold text-psyop-green'
                                 >
                                     Sign In
                                 </Text>
