@@ -5,8 +5,6 @@ import {collection, query, where, getDocs, arrayUnion, doc, updateDoc} from "fir
 import Animated, {SlideInRight} from "react-native-reanimated";
 import {useRouter} from "expo-router";
 import {useAuth} from "../../context/authContext";
-
-// For wave shape
 import Svg, {Defs, Path, Stop} from "react-native-svg";
 import { LinearGradient as SvgLinearGradient } from "react-native-svg";
 import { StatusBar } from "expo-status-bar";
@@ -15,20 +13,20 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 export default function OnboardingScreen() {
     const router = useRouter();
     const { user } = useAuth();
-    const [coaches, setCoaches] = useState([]);
+    const [trainers, setTrainers] = useState([]);
     const [selectedCoach, setSelectedCoach] = useState(null);
+    const insets = useSafeAreaInsets();
 
-    // 1) Fetch trainers
     useEffect(() => {
         async function fetchCoaches() {
             try {
-                const q = query(collection(db, "users"), where("role", "==", "trainer"));
-                const snapshot = await getDocs(q);
+                const userQuery = query(collection(db, "users"), where("role", "==", "trainer"));
+                const snapshot = await getDocs(userQuery);
                 const data = snapshot.docs.map((docSnap) => ({
                     id: docSnap.id,
                     ...docSnap.data(),
                 }));
-                setCoaches(data);
+                setTrainers(data);
             } catch (err) {
                 console.log("Error fetching coaches:", err);
             }
@@ -36,12 +34,10 @@ export default function OnboardingScreen() {
         fetchCoaches();
     }, []);
 
-    // 2) Select a coach
     const handleCoachSelect = (coachId) => {
         setSelectedCoach(coachId);
     };
 
-    // 3) Complete onboarding + navigate
     const handleContinue = async () => {
         if (!user?.uid || !selectedCoach) return;
 
@@ -58,19 +54,13 @@ export default function OnboardingScreen() {
         router.replace("/(app)/operatorHome");
     };
 
-    const insets = useSafeAreaInsets();
-
     return (
         <View className="flex-1 bg-white">
-            {/* Make the status bar translucent so the wave shows behind the notch */}
             <StatusBar translucent backgroundColor="transparent" style="light" />
-
-            {/* Animate the entire screen on entry */}
             <Animated.View entering={SlideInRight.duration(500)} className="flex-1">
 
                 {/* WAVE CONTAINER */}
                 <View className="relative w-full" style={{ height: "30%" }}>
-                    {/* The SVG wave is absolutely positioned */}
                     <Svg
                         viewBox="0 0 1440 320"
                         preserveAspectRatio="none"
@@ -89,13 +79,12 @@ export default function OnboardingScreen() {
                         />
                     </Svg>
 
-                    {/* TEXT overlay - absolutely positioned ABOVE the wave */}
+                    {/* TEXT OVERLAY */}
                     <View
                         className="absolute w-full"
                         style={{
                             top: insets.top + 40,
                             paddingHorizontal: 20
-                            // Optionally: zIndex: 2
                         }}
                     >
                         <Text className="text-3xl font-bold text-white mb-2">Welcome!</Text>
@@ -111,9 +100,8 @@ export default function OnboardingScreen() {
                     <Text className="text-base text-gray-500 mb-4">
                         Pick from the list below. You can always change later.
                     </Text>
-
                     <FlatList
-                        data={coaches}
+                        data={trainers}
                         keyExtractor={(item) => item.id}
                         contentContainerStyle={{ paddingBottom: 80 }}
                         renderItem={({ item }) => {
@@ -121,18 +109,9 @@ export default function OnboardingScreen() {
                             return (
                                 <TouchableOpacity
                                     onPress={() => handleCoachSelect(item.id)}
-                                    className={`
-                    mb-3 p-4 rounded-full
-                    border border-gray-300
-                    ${isSelected ? "bg-psyop-green border-blue-600" : "bg-white"}
-                  `}
+                                    className={`mb-3 p-4 rounded-full border border-gray-300 ${isSelected ? "bg-psyop-green border-psyop-green" : "bg-white"}`}
                                 >
-                                    <Text
-                                        className={`
-                      text-base font-semibold
-                      ${isSelected ? "text-white" : "text-gray-800"}
-                    `}
-                                    >
+                                    <Text className={`text-base font-semibold ${isSelected ? "text-white" : "text-gray-800"}`}>
                                         {item.username ?? "Unnamed Coach"}
                                     </Text>
                                 </TouchableOpacity>
@@ -141,7 +120,6 @@ export default function OnboardingScreen() {
                     />
                 </View>
 
-                {/* Continue button pinned at the bottom */}
                 {selectedCoach && (
                     <View className="absolute bottom-6 w-full px-4 py-4 bg-white">
                         <TouchableOpacity
