@@ -1,12 +1,4 @@
-import {
-    View,
-    Text,
-    Image,
-    TextInput,
-    TouchableOpacity,
-    Pressable,
-    Alert,
-} from 'react-native';
+import { View, Text, Image, TextInput, TouchableOpacity, Pressable, Alert } from 'react-native';
 import React, { useRef, useState } from 'react';
 import {
     widthPercentageToDP as wp,
@@ -33,14 +25,13 @@ export default function SignIn() {
         }
 
         setLoading(true);
-        const response = await login(emailRef.current, passwordRef.current);
+        const res = await login(emailRef.current, passwordRef.current);
         setLoading(false);
-        console.log('sign in reposnse: ', response);
-        if (!response.success) {
-            Alert.alert('Sign In', response.msg);
+        if (!res.success) {
+            Alert.alert('Sign In', res.msg);
         }
     };
-    
+
     return (
         <CustomKeyboardView>
             <StatusBar style='dark' />
@@ -71,10 +62,10 @@ export default function SignIn() {
                             style={{ height: hp(7) }}
                             className='flex-row gap-4 px-4 bg-neutral-100 items-center rounded-full'
                         >
-                            <Octicons 
-                                name='mail' 
-                                size={hp(2.7)} 
-                                color='gray' 
+                            <Octicons
+                                name='mail'
+                                size={hp(2.7)}
+                                color='gray'
                             />
                             <TextInput
                                 onChangeText={(value) => emailRef.current = value}

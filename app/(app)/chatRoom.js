@@ -83,8 +83,6 @@ export default function ChatRoom() {
                 createdAt: Timestamp.fromDate(new Date())
             });
 
-
-            // console.log('new message id: ', newDoc.id);
         }catch(err){
             Alert.alert('Message', err.message);
         }

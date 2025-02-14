@@ -1,11 +1,11 @@
-import React, {useState, useEffect} from "react";
-import {View, Text, TouchableOpacity, FlatList} from "react-native";
-import {db} from "../../firebaseConfig";
-import {collection, query, where, getDocs, arrayUnion, doc, updateDoc} from "firebase/firestore";
-import Animated, {SlideInRight} from "react-native-reanimated";
-import {useRouter} from "expo-router";
-import {useAuth} from "../../context/authContext";
-import Svg, {Defs, Path, Stop} from "react-native-svg";
+import React, { useState, useEffect } from "react";
+import { View, Text, TouchableOpacity, FlatList } from "react-native";
+import { db } from "../../firebaseConfig";
+import { collection, query, where, getDocs, arrayUnion, doc, updateDoc } from "firebase/firestore";
+import Animated, { SlideInRight } from "react-native-reanimated";
+import { useRouter } from "expo-router";
+import { useAuth } from "../../context/authContext";
+import Svg, { Defs, Path, Stop } from "react-native-svg";
 import { LinearGradient as SvgLinearGradient } from "react-native-svg";
 import { StatusBar } from "expo-status-bar";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -82,10 +82,7 @@ export default function OnboardingScreen() {
                     {/* TEXT OVERLAY */}
                     <View
                         className="absolute w-full"
-                        style={{
-                            top: insets.top + 40,
-                            paddingHorizontal: 20
-                        }}
+                        style={{ top: insets.top + 40, paddingHorizontal: 20 }}
                     >
                         <Text className="text-3xl font-bold text-white mb-2">Welcome!</Text>
                         <Text className="text-base text-white">
