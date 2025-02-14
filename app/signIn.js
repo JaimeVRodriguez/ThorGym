@@ -33,14 +33,13 @@ export default function SignIn() {
         }
 
         setLoading(true);
-        const response = await login(emailRef.current, passwordRef.current);
+        const res = await login(emailRef.current, passwordRef.current);
         setLoading(false);
-        console.log('sign in reposnse: ', response);
-        if (!response.success) {
-            Alert.alert('Sign In', response.msg);
+        if (!res.success) {
+            Alert.alert('Sign In', res.msg);
         }
     };
-    
+
     return (
         <CustomKeyboardView>
             <StatusBar style='dark' />
@@ -71,13 +70,11 @@ export default function SignIn() {
                             style={{ height: hp(7) }}
                             className='flex-row gap-4 px-4 bg-neutral-100 items-center rounded-full'
                         >
-                            <Octicons 
-                                name='mail' 
-                                size={hp(2.7)} 
-                                color='gray' 
-                            />
+                            <Octicons name='mail' size={hp(2.7)} color='gray' />
                             <TextInput
-                                onChangeText={(value) => emailRef.current = value}
+                                onChangeText={(value) =>
+                                    (emailRef.current = value)
+                                }
                                 style={{ fontSize: hp(2) }}
                                 className='flex-1 font-semibold text-neutral-700'
                                 placeholder='Email address'
@@ -95,7 +92,9 @@ export default function SignIn() {
                                     color='gray'
                                 />
                                 <TextInput
-                                    onChangeText={(value) => passwordRef.current = value}
+                                    onChangeText={(value) =>
+                                        (passwordRef.current = value)
+                                    }
                                     style={{ fontSize: hp(2) }}
                                     className='flex-1 font-semibold text-neutral-700'
                                     placeholder='Password'
