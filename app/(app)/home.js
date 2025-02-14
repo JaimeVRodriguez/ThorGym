@@ -12,37 +12,31 @@ export default function Home() {
     const [users, setUsers] = useState([]);
 
     useEffect(() => {
-        if (user?.uid)
-            getUsers();
-    }, [])
+        if (user?.uid) getUsers();
+    }, []);
 
     const getUsers = async () => {
         const userQuery = query(usersRef, where('userId', '!=', user?.uid));
 
         const querySnapshot = await getDocs(userQuery);
         let data = [];
-        querySnapshot.forEach(doc => {
+        querySnapshot.forEach((doc) => {
             data.push({ ...doc.data() });
         });
 
         setUsers(data);
-    }
+    };
 
     return (
-        <View className="flex-1 bg-white">
-            <StatusBar style="light" />
-            {
-                users.length > 0 ? (
-                    <ChatList
-                        currentUser={user}
-                        users={users}
-                    />
-                ) : (
-                    <View className="flex items-center" style={{ top: hp(30) }}>
-                        <ActivityIndicator size="large" />
-                    </View>
-                )
-            }
+        <View className='flex-1 bg-white'>
+            <StatusBar style='light' />
+            {users.length > 0 ? (
+                <ChatList currentUser={user} users={users} />
+            ) : (
+                <View className='flex items-center' style={{ top: hp(30) }}>
+                    <ActivityIndicator size='large' />
+                </View>
+            )}
         </View>
-    )
+    );
 }

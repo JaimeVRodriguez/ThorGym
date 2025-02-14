@@ -1,30 +1,30 @@
-import React from 'react'
-import {Stack} from 'expo-router'
-import HomeHeader from '../../components/HomeHeader'
+import React from 'react';
+import { Stack } from 'expo-router';
+import HomeHeader from '../../components/HomeHeader';
 
 export default function _layout() {
     return (
         <Stack>
             <Stack.Screen
-                name="home"
+                name='home'
                 options={{
-                    header: () => <HomeHeader/>
+                    header: () => <HomeHeader />,
                 }}
             />
 
             <Stack.Screen
-                name="operatorHome"
+                name='operatorHome'
                 options={{
-                    header: () => <HomeHeader/>
+                    header: () => <HomeHeader />,
                 }}
             />
 
             <Stack.Screen
                 name='onboarding'
                 options={{
-                    headerShown: false
+                    headerShown: false,
                 }}
             />
         </Stack>
-    )
+    );
 }
