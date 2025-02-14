@@ -139,7 +139,7 @@ export default function SignUp() {
                             <Switch
                                 value={role === 'trainer'}
                                 onValueChange={(value) => setRole(value ? 'trainer' : 'user')}
-                                trackColor={{ false: '#ccc', true: '#4F46E5' }}
+                                trackColor={{ false: '#CCC', true: '#06402B' }}
                                 thumbColor={role === 'trainer' ? '#fff' : '#f4f3f4'}
                             />
                         </View>

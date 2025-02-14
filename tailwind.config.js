@@ -9,9 +9,9 @@ module.exports = {
         extend: {
             colors: {
                 psyop: {
-                    green: '#06402b',
-                    gold: '#d4af37',
-                    grey: '#c0c0c0',
+                    green: '#06402B',
+                    gold: '#d4aF37',
+                    grey: '#C0C0C0',
                 },
             },
         },
