@@ -1,53 +1,55 @@
 import React, {useState, useEffect} from "react";
 import {View, Text, TouchableOpacity, FlatList} from "react-native";
 import {db} from "../../firebaseConfig";
-import {collection, query, where, getDocs, arrayUnion} from "firebase/firestore";
+import {collection, query, where, getDocs, arrayUnion, doc, updateDoc} from "firebase/firestore";
 import Animated, {SlideInRight} from "react-native-reanimated";
 import {useRouter} from "expo-router";
-import {doc, updateDoc} from "firebase/firestore";
 import {useAuth} from "../../context/authContext";
+
+// For wave shape
+import Svg, {Defs, Path, Stop} from "react-native-svg";
+import { LinearGradient as SvgLinearGradient } from "react-native-svg";
+import { StatusBar } from "expo-status-bar";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function OnboardingScreen() {
     const router = useRouter();
-    const {user} = useAuth();
+    const { user } = useAuth();
     const [coaches, setCoaches] = useState([]);
     const [selectedCoach, setSelectedCoach] = useState(null);
 
-    // 1) Fetch the trainers
+    // 1) Fetch trainers
     useEffect(() => {
         async function fetchCoaches() {
             try {
                 const q = query(collection(db, "users"), where("role", "==", "trainer"));
                 const snapshot = await getDocs(q);
-                const data = snapshot.docs.map((doc) => ({
-                    id: doc.id,
-                    ...doc.data(),
+                const data = snapshot.docs.map((docSnap) => ({
+                    id: docSnap.id,
+                    ...docSnap.data(),
                 }));
                 setCoaches(data);
             } catch (err) {
                 console.log("Error fetching coaches:", err);
             }
         }
-
         fetchCoaches();
     }, []);
 
-    // 2) Handle selecting a coach
+    // 2) Select a coach
     const handleCoachSelect = (coachId) => {
         setSelectedCoach(coachId);
     };
 
-    // 3) Mark onboarding complete and navigate
+    // 3) Complete onboarding + navigate
     const handleContinue = async () => {
         if (!user?.uid || !selectedCoach) return;
 
-        // 1) Update user doc (as before)
         await updateDoc(doc(db, "users", user.uid), {
             hasSeenOnboarding: true,
             assignedCoach: selectedCoach
         });
 
-        // 2) ALSO update the trainer doc to store this user
         const trainerDocRef = doc(db, "users", selectedCoach);
         await updateDoc(trainerDocRef, {
             assignedUsers: arrayUnion(user.uid)
@@ -56,47 +58,101 @@ export default function OnboardingScreen() {
         router.replace("/(app)/operatorHome");
     };
 
+    const insets = useSafeAreaInsets();
+
     return (
-        <Animated.View
-            entering={SlideInRight.duration(500)}
-            className="flex-1 items-center justify-center bg-white px-4"
-        >
-            <Text className="text-2xl font-bold mb-4">Select Your Coach</Text>
+        <View className="flex-1 bg-white">
+            {/* Make the status bar translucent so the wave shows behind the notch */}
+            <StatusBar translucent backgroundColor="transparent" style="light" />
 
-            {/* 4) Display the list of trainers */}
-            <FlatList
-                data={coaches}
-                keyExtractor={(item) => item.id}
-                renderItem={({item}) => {
-                    const isSelected = item.id === selectedCoach;
-                    return (
+            {/* Animate the entire screen on entry */}
+            <Animated.View entering={SlideInRight.duration(500)} className="flex-1">
+
+                {/* WAVE CONTAINER */}
+                <View className="relative w-full" style={{ height: "30%" }}>
+                    {/* The SVG wave is absolutely positioned */}
+                    <Svg
+                        viewBox="0 0 1440 320"
+                        preserveAspectRatio="none"
+                        className="absolute top-0 left-0 w-full h-full"
+                    >
+                        <Defs>
+                            <SvgLinearGradient id="waveGradient" x1="0" y1="0" x2="1" y2="1">
+                                <Stop offset="0%" stopColor="#F8B500" />
+                                <Stop offset="100%" stopColor="#F76B1C" />
+                            </SvgLinearGradient>
+                        </Defs>
+                        <Path
+                            fill="#06402B"
+                            fillOpacity="1"
+                            d="M0,288L80,277.3C160,267,320,245,480,250.7C640,256,800,288,960,288C1120,288,1280,256,1360,240L1440,224L1440,0L1360,0C1280,0,1120,0,960,0C800,0,640,0,480,0C320,0,160,0,80,0L0,0Z"
+                        />
+                    </Svg>
+
+                    {/* TEXT overlay - absolutely positioned ABOVE the wave */}
+                    <View
+                        className="absolute w-full"
+                        style={{
+                            top: insets.top + 40,
+                            paddingHorizontal: 20
+                            // Optionally: zIndex: 2
+                        }}
+                    >
+                        <Text className="text-3xl font-bold text-white mb-2">Welcome!</Text>
+                        <Text className="text-base text-white">
+                            Let’s find the right coach to get you started
+                        </Text>
+                    </View>
+                </View>
+
+                {/* MAIN CONTENT: Trainer selection */}
+                <View className="flex-1 px-4 pt-6">
+                    <Text className="text-xl font-bold text-gray-900 mb-2">Select Your Trainer</Text>
+                    <Text className="text-base text-gray-500 mb-4">
+                        Pick from the list below. You can always change later.
+                    </Text>
+
+                    <FlatList
+                        data={coaches}
+                        keyExtractor={(item) => item.id}
+                        contentContainerStyle={{ paddingBottom: 80 }}
+                        renderItem={({ item }) => {
+                            const isSelected = item.id === selectedCoach;
+                            return (
+                                <TouchableOpacity
+                                    onPress={() => handleCoachSelect(item.id)}
+                                    className={`
+                    mb-3 p-4 rounded-full
+                    border border-gray-300
+                    ${isSelected ? "bg-psyop-green border-blue-600" : "bg-white"}
+                  `}
+                                >
+                                    <Text
+                                        className={`
+                      text-base font-semibold
+                      ${isSelected ? "text-white" : "text-gray-800"}
+                    `}
+                                    >
+                                        {item.username ?? "Unnamed Coach"}
+                                    </Text>
+                                </TouchableOpacity>
+                            );
+                        }}
+                    />
+                </View>
+
+                {/* Continue button pinned at the bottom */}
+                {selectedCoach && (
+                    <View className="absolute bottom-6 w-full px-4 py-4 bg-white">
                         <TouchableOpacity
-                            onPress={() => handleCoachSelect(item.id)}
-                            className={`mb-3 p-4 rounded-lg ${
-                                isSelected ? "bg-blue-500" : "bg-gray-200"
-                            }`}
+                            onPress={handleContinue}
+                            className="bg-psyop-green rounded-full py-4 items-center"
                         >
-                            <Text
-                                className={`text-lg font-semibold ${
-                                    isSelected ? "text-white" : "text-black"
-                                }`}
-                            >
-                                {item.username ?? "Unnamed Coach"}
-                            </Text>
+                            <Text className="text-white text-lg font-bold">Continue</Text>
                         </TouchableOpacity>
-                    );
-                }}
-            />
-
-            {/* 5) Only show continue if user selected a coach */}
-            {selectedCoach && (
-                <TouchableOpacity
-                    onPress={handleContinue}
-                    className="mt-4 bg-blue-600 px-6 py-3 rounded-lg"
-                >
-                    <Text className="text-white text-lg font-bold">Continue</Text>
-                </TouchableOpacity>
-            )}
-        </Animated.View>
+                    </View>
+                )}
+            </Animated.View>
+        </View>
     );
 }
