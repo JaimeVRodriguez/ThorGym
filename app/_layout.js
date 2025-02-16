@@ -31,9 +31,9 @@ function MainLayout() {
                 router.replace('/(app)/operatorHome');
             }
         } else if (user.role === 'trainer') {
-            router.replace('/(app)/home');
+            router.replace('/(app)/trainerHome');
         } else {
-            router.replace('/(app)/home');
+            router.replace('/(app)/trainerHome');
         }
     }, [isAuthenticated, user]);
 
