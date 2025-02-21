@@ -6,7 +6,7 @@ export default function _layout() {
     return (
         <Stack>
             <Stack.Screen
-                name='home'
+                name='trainerHome'
                 options={{
                     header: () => <HomeHeader />,
                 }}
