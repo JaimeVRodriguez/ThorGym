@@ -43,15 +43,18 @@ const styles = StyleSheet.create({
         shadowRadius: 3
     },
     button: {
-        width: 120,
+        width: 135,
         height: 48,
         borderRadius: 24,
         backgroundColor: '#06402BBF',
-        color: '#f8f9ff',
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
         position: 'absolute',
         zIndex: 1
+    },
+    content: {
+        color: '#f8f9ff',
+        fontWeight: '500'
     }
 });

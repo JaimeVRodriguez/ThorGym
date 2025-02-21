@@ -170,7 +170,7 @@ export default function Home() {
                         <FloatingActionButton
                             isExpanded={isExpanded}
                             index={2}
-                            buttonLabel="Create Notification"
+                            buttonLabel="Send Notification"
                             onPress={() => {
                                 openNotificationModal();
                                 isExpanded.value = false;
