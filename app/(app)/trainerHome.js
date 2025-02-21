@@ -8,14 +8,23 @@ import {
   ActivityIndicator,
   FlatList,
   Image,
+  Modal,
+  TextInput,
+  Button,
 } from 'react-native';
 import { db } from '../../firebaseConfig';
-import { collection, getDocs, query, where } from 'firebase/firestore';
+import {
+  collection,
+  getDocs,
+  query,
+  where,
+  addDoc,
+  serverTimestamp,
+} from 'firebase/firestore';
 import { useAuth } from '../../context/authContext';
 import { heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { blurhash } from '../../utils/common';
 
-// Reanimated imports
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -25,26 +34,19 @@ import Animated, {
   interpolate,
 } from 'react-native-reanimated';
 
-// Animate the Pressable
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
-// Spring animation settings
 const SPRING_CONFIG = {
   duration: 1200,
   overshootClamping: true,
   dampingRatio: 0.8,
 };
 
-// Distance to offset each expanded button
 const OFFSET = 60;
 
-/**
- * A single floating sub-button (e.g. Create Workout, Create Notification).
- */
-const FloatingActionButton = ({ isExpanded, index, buttonLetter }) => {
-  // Each sub-button slides upward and scales in
+// Sub-button
+const FloatingActionButton = ({ isExpanded, index, buttonLabel, onPress }) => {
   const animatedStyles = useAnimatedStyle(() => {
-    // e.g. index=1 => moves up 60, index=2 => 120, etc.
     const moveDistance = isExpanded.value ? OFFSET * index : 0;
     const translateValue = withSpring(-moveDistance, SPRING_CONFIG);
 
@@ -62,8 +64,11 @@ const FloatingActionButton = ({ isExpanded, index, buttonLetter }) => {
   });
 
   return (
-    <AnimatedPressable style={[animatedStyles, styles.shadow, subButtonStyles.button]}>
-      <Text style={styles.content}>{buttonLetter}</Text>
+    <AnimatedPressable
+      onPress={onPress}
+      style={[animatedStyles, styles.shadow, subButtonStyles.button]}
+    >
+      <Text style={styles.content}>{buttonLabel}</Text>
     </AnimatedPressable>
   );
 };
@@ -76,9 +81,14 @@ export default function Home() {
   // Reanimated shared value to control expand/collapse
   const isExpanded = useSharedValue(false);
 
-  // Fetch assigned users on mount
+  // Modal for "Create Notification"
+  const [showNotificationModal, setShowNotificationModal] = useState(false);
+  const [notificationText, setNotificationText] = useState('');
+
   useEffect(() => {
-    if (user?.uid) getUsers();
+    if (user?.uid) {
+      getUsers();
+    }
   }, [user?.uid]);
 
   const getUsers = async () => {
@@ -100,7 +110,7 @@ export default function Home() {
   };
 
   // Toggle the main FAB
-  const handlePress = () => {
+  const handlePressFAB = () => {
     isExpanded.value = !isExpanded.value;
   };
 
@@ -117,6 +127,35 @@ export default function Home() {
       ],
     };
   });
+
+  // Open / close the "Create Notification" modal
+  const openNotificationModal = () => {
+    setShowNotificationModal(true);
+  };
+  const closeNotificationModal = () => {
+    setShowNotificationModal(false);
+    setNotificationText('');
+  };
+
+  // Create a new doc in Firestore for all "user" roles to see
+  const handleSendNotification = async () => {
+    try {
+      if (!notificationText.trim()) {
+        // If empty, just close
+        closeNotificationModal();
+        return;
+      }
+      await addDoc(collection(db, 'notifications'), {
+        message: notificationText,
+        createdAt: serverTimestamp(),
+        toRole: 'user', // So user accounts know to retrieve it
+      });
+      console.log('Notification sent!', notificationText);
+      closeNotificationModal();
+    } catch (error) {
+      console.error('Error sending notification:', error);
+    }
+  };
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -167,9 +206,9 @@ export default function Home() {
         {/* FAB Section - pinned to bottom-right */}
         <View style={styles.fabContainer}>
           <View style={styles.fabColumn}>
-            {/* Main FAB (purple +) */}
+            {/* Main FAB (+) */}
             <AnimatedPressable
-              onPress={handlePress}
+              onPress={handlePressFAB}
               style={[styles.shadow, mainButtonStyles.button]}
             >
               <Animated.Text style={[plusIconStyle, mainButtonStyles.content]}>
@@ -177,19 +216,55 @@ export default function Home() {
               </Animated.Text>
             </AnimatedPressable>
 
-            {/* Sub-buttons: "Create Workout" and "Create Notification" */}
+            {/* Sub-button 1: Create Workout (placeholder) */}
             <FloatingActionButton
               isExpanded={isExpanded}
               index={1}
-              buttonLetter={'Create Workout'}
+              buttonLabel="Create Workout"
+              onPress={() => {
+                console.log('Create Workout tapped!');
+                isExpanded.value = false;
+              }}
             />
+            {/* Sub-button 2: Create Notification => open modal */}
             <FloatingActionButton
               isExpanded={isExpanded}
               index={2}
-              buttonLetter={'Create Notification'}
+              buttonLabel="Create Notification"
+              onPress={() => {
+                openNotificationModal();
+                isExpanded.value = false;
+              }}
             />
           </View>
         </View>
+
+        {/* Notification Modal */}
+        <Modal
+          visible={showNotificationModal}
+          animationType="slide"
+          transparent={true}
+          onRequestClose={closeNotificationModal}
+        >
+          <View style={styles.modalBackdrop}>
+            <View style={styles.modalContent}>
+              <Text style={{ fontWeight: '600', fontSize: 18, marginBottom: 8 }}>
+                Send a Notification
+              </Text>
+              <TextInput
+                style={styles.textInput}
+                placeholder="Enter notification text..."
+                value={notificationText}
+                onChangeText={setNotificationText}
+              />
+              <View style={{ flexDirection: 'row', marginTop: 12 }}>
+                <Button title="Cancel" onPress={closeNotificationModal} />
+                <View style={{ width: 20 }} />
+                <Button title="Send" onPress={handleSendNotification} />
+              </View>
+            </View>
+          </View>
+        </Modal>
       </View>
     </SafeAreaView>
   );
@@ -216,22 +291,21 @@ const mainButtonStyles = StyleSheet.create({
 /* Smaller sub-buttons */
 const subButtonStyles = StyleSheet.create({
   button: {
-    width: 150,
+    width: 120,
     height: 48,
     borderRadius: 24,
-    backgroundColor: '#06402BBF',
-    display: 'flex',            // <-- Must be 'flex' not 'center'
-    justifyContent: 'center',   // Center vertically
-    alignItems: 'center',       // Center horizontally
+    backgroundColor: '#82cab2',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
     position: 'absolute',
-    zIndex: 1, // ensure sub-buttons appear above other elements
+    zIndex: 1,
   },
 });
 
 /* Layout & shadows */
 const styles = StyleSheet.create({
   fabContainer: {
-    // Anchor the entire group of buttons at bottom-right
     position: 'absolute',
     bottom: 20,
     right: 20,
@@ -250,5 +324,28 @@ const styles = StyleSheet.create({
   content: {
     color: '#f8f9ff',
     fontWeight: '500',
+  },
+  // Modal
+  modalBackdrop: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.35)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContent: {
+    width: '80%',
+    minHeight: 200,
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: 16,
+    alignItems: 'center',
+  },
+  textInput: {
+    width: '100%',
+    borderColor: '#ccc',
+    borderWidth: 1,
+    marginTop: 8,
+    borderRadius: 6,
+    padding: 8,
   },
 });

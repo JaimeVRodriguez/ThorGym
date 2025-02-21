@@ -25,6 +25,13 @@ export default function _layout() {
                     headerShown: false,
                 }}
             />
+
+            <Stack.Screen
+                name='notifications'
+                options={{
+                    header: () => <HomeHeader />,
+                }}
+            />
         </Stack>
     );
 }
