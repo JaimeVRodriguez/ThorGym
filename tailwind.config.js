@@ -10,7 +10,7 @@ module.exports = {
             colors: {
                 psyop: {
                     green: '#06402B',
-                    gold: '#d4aF37',
+                    gold: '#D4AF37',
                     grey: '#C0C0C0',
                 },
             },
