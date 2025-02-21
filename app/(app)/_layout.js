@@ -6,23 +6,30 @@ export default function _layout() {
     return (
         <Stack>
             <Stack.Screen
-                name='trainerHome'
+                name="trainerHome"
                 options={{
-                    header: () => <HomeHeader />,
+                    header: () => <HomeHeader/>
                 }}
             />
 
             <Stack.Screen
-                name='operatorHome'
+                name="operatorHome"
                 options={{
-                    header: () => <HomeHeader />,
+                    header: () => <HomeHeader/>
                 }}
             />
 
             <Stack.Screen
-                name='onboarding'
+                name="onboarding"
                 options={{
-                    headerShown: false,
+                    headerShown: false
+                }}
+            />
+
+            <Stack.Screen
+                name="notifications"
+                options={{
+                    header: () => <HomeHeader/>
                 }}
             />
         </Stack>
