@@ -92,7 +92,7 @@ export default function Home() {
             await addDoc(collection(db, 'notifications'), {
                 message: notificationText,
                 createdAt: serverTimestamp(),
-                toRole: 'user'
+                readBy: []
             });
             console.log('Notification sent!', notificationText);
             closeNotificationModal();
