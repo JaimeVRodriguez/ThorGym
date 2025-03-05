@@ -136,7 +136,7 @@ export default function Home() {
                 )}
 
                 <View className="absolute bottom-5 right-5">
-                    <View style={styles.fabColumn}>
+                    <View className="flex flex-col items-end overflow-visible">
                         <AnimatedPressable
                             onPress={handlePressFAB}
                             style={[styles.shadow, mainButtonStyles.button]}
