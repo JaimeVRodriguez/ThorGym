@@ -102,9 +102,9 @@ export default function Home() {
     };
 
     return (
-        <SafeAreaView style={{ flex: 1 }}>
-            <View style={{ flex: 1, backgroundColor: '#fff', padding: 16 }}>
-                <Text style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 8 }}>
+        <SafeAreaView className='flex-1'>
+            <View className="flex-1 bg-white p-4">
+                <Text className="text-xl font-bold mb-2">
                     Trainer Home
                 </Text>
 
@@ -116,33 +116,21 @@ export default function Home() {
                         data={users}
                         keyExtractor={(item) => item.id}
                         renderItem={({ item }) => (
-                            <View
-                                style={{
-                                    flex: 1,
-                                    margin: 8,
-                                    padding: 16,
-                                    backgroundColor: '#f3f4f6',
-                                    borderRadius: 8
-                                }}
-                            >
+                            <View className="flex-1 m-2 p-4 bg-gray-100 rounded-lg">
                                 <Image
-                                    style={{
-                                        height: hp(10),
-                                        width: hp(10),
-                                        borderRadius: 100
-                                    }}
+                                    className="h-[10vh] w-[10vh] rounded-full"
                                     source={item.profileUrl}
                                     placeholder={blurhash}
                                     transition={500}
                                 />
-                                <Text style={{ fontSize: 16, fontWeight: '600', marginTop: 8 }}>
+                                <Text className="text-base font-semibold mt-2">
                                     {item.username ?? 'Unnamed User'}
                                 </Text>
                             </View>
                         )}
                     />
                 ) : (
-                    <Text style={{ textAlign: 'center', marginTop: 16, color: '#6b7280' }}>
+                    <Text className="text-center mt-4 text-gray-500">
                         No users assigned to you yet.
                     </Text>
                 )}
