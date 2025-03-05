@@ -135,7 +135,7 @@ export default function Home() {
                     </Text>
                 )}
 
-                <View style={styles.fabContainer}>
+                <View className="absolute bottom-5 right-5">
                     <View style={styles.fabColumn}>
                         <AnimatedPressable
                             onPress={handlePressFAB}
