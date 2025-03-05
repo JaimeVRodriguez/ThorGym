@@ -215,16 +215,6 @@ const mainButtonStyles = StyleSheet.create({
 });
 
 const styles = StyleSheet.create({
-    fabContainer: {
-        position: 'absolute',
-        bottom: 20,
-        right: 20
-    },
-    fabColumn: {
-        flexDirection: 'column',
-        alignItems: 'flex-end',
-        overflow: 'visible'
-    },
     content: {
         color: '#f8f9ff',
         fontWeight: '500'
