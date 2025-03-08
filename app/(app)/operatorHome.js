@@ -17,7 +17,6 @@ export default function OperatorHome() {
         const notificationsQuery = collection(db, 'notifications');
 
         const unsubscribe = onSnapshot(notificationsQuery, (snapshot) => {
-
             const unreadNotifications = snapshot.docs.filter(doc => {
                 const data = doc.data();
                 return !data.readBy || !data.readBy.includes(user.uid); // Correctly check if the user has read it
@@ -30,18 +29,14 @@ export default function OperatorHome() {
     }, [user?.uid]);
 
     return (
-        <View style={{ flex: 1, padding: 16, backgroundColor: '#fff' }}>
-            <View
-                style={{
-                    flexDirection: 'row',
-                    justifyContent: 'space-between'
-                }}
-            >
-                <Text style={{ fontSize: 20, fontWeight: 'bold' }}>
+        <View className="flex-4 p-4 bg-white">
+            <View className="flex-row justify-between">
+                <Text className="text-xl font-bold">
                     User Home
                 </Text>
 
                 <TouchableOpacity
+                    className="relative"
                     onPress={() => router.push('notifications')}
                 >
                     <Ionicons
@@ -49,33 +44,15 @@ export default function OperatorHome() {
                         size={28}
                         color="#333"
                     />
-
                     {unreadCount > 0 && (
-                        <View
-                            style={{
-                                position: 'absolute',
-                                top: -5,
-                                right: -5,
-                                backgroundColor: 'red',
-                                borderRadius: 10,
-                                width: 18,
-                                height: 18,
-                                justifyContent: 'center',
-                                alignItems: 'center'
-                            }}
-                        >
-                            <Text style={{ color: 'white', fontSize: 12, fontWeight: 'bold' }}>
+                        <View className='absolute -top-1.5 -right-1.5 bg-red-500 rounded-full w-5 h-5 flex items-center justify-center'>
+                            <Text className='text-white text-xs font-bold'>
                                 {unreadCount}
                             </Text>
                         </View>
                     )}
-
                 </TouchableOpacity>
             </View>
-
-            <Text>
-                Operator Home
-            </Text>
         </View>
     );
 }
