@@ -27,17 +27,17 @@ export default function SignUp() {
     const [role, setRole] = useState('user');
     const emailRef = useRef('');
     const passwordRef = useRef('');
-    const usernameRef = useRef('');
+    const firstNameRef = useRef('');
+    const lastNameRef = useRef('');
 
     const handleRegister = async () => {
-        if (!emailRef.current || !passwordRef.current || !usernameRef.current) {
+        if (!emailRef.current || !passwordRef.current) {
             Alert.alert('Sign Up', 'Please fill all the fields!');
             return;
         }
         setLoading(true);
 
         const uniqueKey =
-            usernameRef.current.trim() ||
             Math.random().toString(36).substring(7);
         const fallbackAvatarUrl = `https://api.dicebear.com/6.x/bottts/svg?seed=${encodeURIComponent(
             uniqueKey
@@ -46,7 +46,8 @@ export default function SignUp() {
         let response = await register(
             emailRef.current,
             passwordRef.current,
-            usernameRef.current,
+            firstNameRef.current,
+            lastNameRef.current,
             fallbackAvatarUrl,
             role
         );
@@ -83,21 +84,38 @@ export default function SignUp() {
                     </Text>
                     {/* inputs */}
                     <View className='gap-4'>
-                        <View
-                            style={{ height: hp(7) }}
-                            className='flex-row gap-4 px-4 bg-neutral-100 items-center rounded-full'
-                        >
-                            <Feather name='user' size={hp(2.7)} color='gray' />
-                            <TextInput
-                                onChangeText={(value) =>
-                                    (usernameRef.current = value)
-                                }
-                                style={{ fontSize: hp(2) }}
-                                className='flex-1 font-semibold text-neutral-700'
-                                placeholder='Username'
-                                placeholderTextColor={'gray'}
-                            />
+                        <View className="flex-row gap-4">
+                            {/* First Input Field */}
+                            <View
+                                style={{ height: hp(7), flex: 1 }}
+                                className="flex-row gap-4 px-4 bg-neutral-100 items-center rounded-full"
+                            >
+                                <Feather name="user" size={hp(2.7)} color="gray" />
+                                <TextInput
+                                    onChangeText={(value) => (firstNameRef.current = value)}
+                                    style={{ fontSize: hp(2) }}
+                                    className="flex-1 font-semibold text-neutral-700"
+                                    placeholder="First Name"
+                                    placeholderTextColor="gray"
+                                />
+                            </View>
+
+                            {/* Second Input Field */}
+                            <View
+                                style={{ height: hp(7), flex: 1 }}
+                                className="flex-row gap-4 px-4 bg-neutral-100 items-center rounded-full"
+                            >
+                                <Feather name="user" size={hp(2.7)} color="gray" />
+                                <TextInput
+                                    onChangeText={(value) => (lastNameRef.current = value)}
+                                    style={{ fontSize: hp(2) }}
+                                    className="flex-1 font-semibold text-neutral-700"
+                                    placeholder="Last Name"
+                                    placeholderTextColor="gray"
+                                />
+                            </View>
                         </View>
+
 
                         <View
                             style={{ height: hp(7) }}

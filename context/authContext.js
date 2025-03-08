@@ -44,7 +44,7 @@ export const AuthContextProvider = ({ children }) => {
         return unsub;
     }, []);
 
-    const register = async (email, password, username, profileUrl, role) => {
+    const register = async (email, password, firstName, lastName, profileUrl, role) => {
         try {
             const response = await createUserWithEmailAndPassword(
                 auth,
@@ -54,7 +54,8 @@ export const AuthContextProvider = ({ children }) => {
 
             await setDoc(doc(db, 'users', response.user.uid), {
                 userId: response.user.uid,
-                username,
+                firstName,
+                lastName,
                 profileUrl,
                 role,
                 hasSeenOnboarding: role === 'user' ? false : true,
