@@ -146,7 +146,7 @@ export default function OnboardingScreen() {
                                                 : 'text-gray-800'
                                         }`}
                                     >
-                                        {item.username ?? 'Unnamed Coach'}
+                                        {`${item.firstName} + ${item.lastName}` ?? 'Unnamed Coach'}
                                     </Text>
                                 </TouchableOpacity>
                             );

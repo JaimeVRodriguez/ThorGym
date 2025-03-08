@@ -124,7 +124,7 @@ export default function Home() {
                                     transition={500}
                                 />
                                 <Text className="text-base font-semibold mt-2">
-                                    {item.username ?? 'Unnamed User'}
+                                    {`${item.firstName} ${item.lastName}` ?? 'Unnamed User'}
                                 </Text>
                             </View>
                         )}
